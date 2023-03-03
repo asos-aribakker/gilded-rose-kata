@@ -11,10 +11,10 @@
 
         public virtual void UpdateQuality()
         {
-            ReduceQuality();
+            ReduceQuality(1);
             SellIn--;
             if (SellIn < 0)
-                ReduceQuality();
+                ReduceQuality(1);
         }
 
         protected void DecreaseSellIn()
@@ -22,10 +22,12 @@
             SellIn--;
         }
         
-        private void ReduceQuality()
+        protected void ReduceQuality(int increment)
         {
-            if(Quality > MinQuality)
-                Quality--;
+            Quality -= increment;
+
+            if (Quality < MinQuality)
+                Quality = MinQuality;
         }
         
         protected void IncreaseQuality(int increment)

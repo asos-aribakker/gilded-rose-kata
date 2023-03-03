@@ -18,16 +18,14 @@ namespace GildedRose
         {
             foreach (var item in _items)
             {
-                if (item is AgedBrieItem or BackstagePassItem)
-                {
-                    item.UpdateQuality();
-                } 
-                else
-                {
-                    UpdateItemQuality(item);
-
-                    UpdateSellIn(item);        
-                }
+                item.UpdateQuality();
+                
+                // if(1=0)
+                // {
+                //     UpdateItemQuality(item);
+                //
+                //     UpdateSellIn(item);        
+                // }
             }
         }
 
