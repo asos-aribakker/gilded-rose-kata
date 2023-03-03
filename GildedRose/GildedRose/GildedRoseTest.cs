@@ -15,6 +15,18 @@ namespace GildedRose
         }
         
         [Test]
+        [TestCase(0)]
+        [TestCase(10)]
+        [TestCase(20)]
+        public void ShouldLowerSellInDate(int days)
+        {
+            IList<Item> Items = new List<Item> { new Item { Name = "foo", SellIn = days, Quality = 0 } };
+            GildedRose app = new GildedRose(Items);
+            app.UpdateQuality();
+            Assert.AreEqual(days - 1, Items[0].SellIn);
+        }
+        
+        [Test]
         public void ShouldReturnQualityOfZeroWhenStartingQualityIsZero()
         {
             IList<Item> Items = new List<Item> { new Item { Name = "foo", SellIn = 0, Quality = 0 } };
