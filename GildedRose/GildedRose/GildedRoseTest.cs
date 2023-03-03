@@ -51,7 +51,7 @@ namespace GildedRose
         [TestCase(20)]
         public void ShouldIncreaseQualityByTwoWhenNameIsAgedBrie(int quality)
         {
-            IList<Item> Items = new List<Item> { new Item { Name = "Aged Brie", SellIn = 0, Quality = quality } };
+            IList<Item> Items = new List<Item> { new AgedBrieItem { Name = "Aged Brie", SellIn = 0, Quality = quality } };
             GildedRose app = new GildedRose(Items);
             app.UpdateQuality();
             Assert.AreEqual(quality + 2, Items[0].Quality);

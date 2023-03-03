@@ -1,58 +1,80 @@
-﻿namespace GildedRose
+﻿using System.Runtime.CompilerServices;
+
+namespace GildedRose
 {
     public class GildedRose
     {
         private const string BackstagePassName = "Backstage passes to a TAFKAL80ETC concert";
         private const string SulfurasName = "Sulfuras, Hand of Ragnaros";
         private const string AgedBrieName = "Aged Brie";
-        IList<Item> Items;
-        public GildedRose(IList<Item> Items)
+        private const int MaxQuality = 50;
+        private readonly IList<Item> _items;
+        public GildedRose(IList<Item> items)
         {
-            this.Items = Items;
+            this._items = items;
         }
 
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
-            { 
-                var item = Items[i];
-                
-                if (ShouldDecreaseQuality(item))
+            foreach (var item in _items)
+            {
+                if (item is AgedBrieItem or BackstagePassItem)
                 {
-                    item.Quality--;
-                }
+                    item.UpdateQuality();
+                } 
                 else
                 {
-                    IncreaseQuality(item);
+                    UpdateItemQuality(item);
+
+                    UpdateSellIn(item);        
                 }
+            }
+        }
 
-                if (item.Name != SulfurasName)
-                {
-                    item.SellIn--;
-                }
+        private void UpdateSellIn(Item item)
+        {
+            if (item.Name != SulfurasName)
+            {
+                item.SellIn--;
+            }
 
-                if(item.SellIn >= 0)
-                    continue;
+            if (item.SellIn >= 0)
+                return;
 
-                UpdateQualityWhenPastSellIn(item);
+            UpdateQualityWhenPastSellIn(item);
+        }
+
+        private void UpdateItemQuality(Item item)
+        {
+            if (item.Name == SulfurasName)
+                return;
+            
+            if (ShouldDecreaseQuality(item))
+            {
+                item.Quality--;
+            }
+            else
+            {
+                IncreaseQuality(item);
             }
         }
 
         private void IncreaseQuality(Item item)
         {
-            if (item.Quality >= 50) 
+            if (item.Quality >= MaxQuality) 
                 return;
+            
             item.Quality++;
 
             if (!IsBackstagePass(item)) 
                 return;
             
-            if (item is { SellIn: < 11, Quality: < 50 })
+            if (item is { SellIn: < 11, Quality: < MaxQuality })
             {
                 item.Quality++;
             }
 
-            if (item is { SellIn: < 6, Quality: < 50 })
+            if (item is { SellIn: < 6, Quality: < MaxQuality })
             {
                 item.Quality++;
             }
@@ -81,7 +103,7 @@
                 return;
             }
 
-            if (item.Quality < 50)
+            if (item.Quality < MaxQuality)
             {
                 item.Quality++;
             }
@@ -91,15 +113,10 @@
         {
             return IsNonStandardItem(item) && item.Quality > 0;
         }
-
-        private bool IsStandardItem(Item item)
-        {
-            return !IsNonStandardItem(item);
-        }
         
         private bool IsNonStandardItem(Item item)
         {
-            return item.Name != AgedBrieName && !IsBackstagePass(item) && item.Name != SulfurasName;
+            return item.Name != AgedBrieName && !IsBackstagePass(item);
         }
 
         private bool IsBackstagePass(Item item)
